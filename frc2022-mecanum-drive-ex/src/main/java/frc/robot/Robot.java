@@ -10,10 +10,12 @@ import java.util.List;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.Button;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -22,6 +24,12 @@ import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+//limelight imports
 
 import frc.robot.MecanumDriveCTRE;
 import frc.robot.commands.*;
@@ -47,12 +55,18 @@ public class Robot extends TimedRobot {
 
   private MecanumDriveCTRE mRobotDrive;
   private Joystick mJoystickA;
+  private XboxController xController = new XboxController(0); 
   private TalonSRXConfiguration mDriveTalonSRXConfigAll;
   /* Robot Commands */
   private final DriveTimed mSimpleAuto = new DriveTimed(3, 1, 0, 0, mRobotDrive);
   private final DriveTimed mAnotherAuto = new DriveTimed(10, 1, 0, 0, mRobotDrive);
   SendableChooser<DriveTimed> m_chooser = new SendableChooser<>();
   private DriveTimed m_auto_command;
+
+  private NetworkTable table;
+  private NetworkTableEntry tx;
+  private NetworkTableEntry ta;
+  private NetworkTableEntry ty; 
 
   @Override
   public void robotInit() {
@@ -97,6 +111,17 @@ public class Robot extends TimedRobot {
     // auto selections
     m_chooser.setDefaultOption("Simple Auto", mSimpleAuto);
     m_chooser.addOption("Another Auto", mAnotherAuto);
+
+    //limelight stuff
+    table = NetworkTableInstance.getDefault().getTable("limelight");
+    tx = table.getEntry("tx");
+    ty = table.getEntry("ty");
+    ta = table.getEntry("ta");
+
+    
+    new Button(xController::getAButton).whenHeld(new LimelightDrive(mRobotDrive, table));
+    
+
   }
 
   public void doSmartDashboardTelemetry() {    
