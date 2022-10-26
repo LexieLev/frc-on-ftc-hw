@@ -119,7 +119,7 @@ public class Robot extends TimedRobot {
     ta = table.getEntry("ta");
 
     
-    new Button(xController::getAButton).whenHeld(new LimelightDrive(mRobotDrive, table));
+    new Button(xController::getYButton).whenHeld(new LimelightDrive(mRobotDrive, table));
     
 
   }
@@ -164,9 +164,9 @@ public class Robot extends TimedRobot {
     // Use the joystick X axis for lateral movement, Y axis for forward
     // movement, and Z axis for rotation.
     mRobotDrive.driveCartesian(
-      -mJoystickA.getRawAxis(kJoystickALeftY),
-      mJoystickA.getRawAxis(kJoystickALeftX),
-      mJoystickA.getRawAxis(kJoystickARightX),
+      xController.getLeftY(),
+      xController.getLeftX(),
+      xController.getRightX(),
       0.0);
   }
 
