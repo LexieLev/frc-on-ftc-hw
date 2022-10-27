@@ -244,14 +244,13 @@ public class MecanumDriveCTRE extends RobotDriveBase implements Sendable, AutoCl
    *     to implement field-oriented controls.
    */
   @SuppressWarnings("ParameterName")
-  public void driveCartesian(DoubleSupplier ySpeed, DoubleSupplier xSpeed, DoubleSupplier zRotation, double gyroAngle) {
+  public void driveCartesian(double ySpeed, double xSpeed, double zRotation, double gyroAngle) {
     if (!m_reported) {
       HAL.report(
           tResourceType.kResourceType_RobotDrive, tInstances.kRobotDrive2_MecanumCartesian, 4);
       m_reported = true;
     }
 
-    
     ySpeed = MathUtil.applyDeadband(ySpeed, m_deadband);
     xSpeed = MathUtil.applyDeadband(xSpeed, m_deadband);
 
