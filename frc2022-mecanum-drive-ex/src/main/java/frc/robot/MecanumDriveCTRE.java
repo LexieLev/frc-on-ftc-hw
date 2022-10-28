@@ -6,8 +6,6 @@ package frc.robot;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
@@ -226,8 +224,8 @@ public class MecanumDriveCTRE extends RobotDriveBase implements Sendable, AutoCl
    *     positive.
    */
   @SuppressWarnings("ParameterName")
-  public void driveCartesian(DoubleSupplier ySpeed, DoubleSupplier xSpeed, DoubleSupplier zRotation) {
-    driveCartesianIK(ySpeed, xSpeed, zRotation, 0.0);
+  public void driveCartesian(double ySpeed, double xSpeed, double zRotation) {
+    driveCartesian(ySpeed, xSpeed, zRotation, 0.0);
   }
 
   /**
@@ -302,7 +300,7 @@ public class MecanumDriveCTRE extends RobotDriveBase implements Sendable, AutoCl
    * @return Wheel speeds [-1.0..1.0].
    */
   @SuppressWarnings("ParameterName")
-  public static WheelSpeeds driveCartesianIK(DoubleSupplier ySpeed, DoubleSupplier xSpeed, DoubleSupplier zRotation) {
+  public static WheelSpeeds driveCartesianIK(double ySpeed, double xSpeed, double zRotation) {
     return driveCartesianIK(ySpeed, xSpeed, zRotation, 0.0);
   }
 
@@ -322,22 +320,19 @@ public class MecanumDriveCTRE extends RobotDriveBase implements Sendable, AutoCl
    */
   @SuppressWarnings("ParameterName")
   public static WheelSpeeds driveCartesianIK(
-      DoubleSupplier ySpeed, DoubleSupplier xSpeed, DoubleSupplier zRotation, Double gyroAngle) {
-      double y = ySpeed.getAsDouble();
-      double x = xSpeed.getAsDouble();
-      double z = zRotation.getAsDouble();
-    y = MathUtil.clamp(y, -1.0, 1.0);
-    x = MathUtil.clamp(x, -1.0, 1.0);
+      double ySpeed, double xSpeed, double zRotation, double gyroAngle) {
+    ySpeed = MathUtil.clamp(ySpeed, -1.0, 1.0);
+    xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0);
 
     // Compensate for gyro angle.
-    Vector2d input = new Vector2d(y, x);
+    Vector2d input = new Vector2d(ySpeed, xSpeed);
     input.rotate(-gyroAngle);
 
     double[] wheelSpeeds = new double[4];
-    wheelSpeeds[MotorType.kFrontLeft.value] = x + y + z;
-    wheelSpeeds[MotorType.kFrontRight.value] = x - y - z;
-    wheelSpeeds[MotorType.kRearLeft.value] = x - y + z;
-    wheelSpeeds[MotorType.kRearRight.value] = x + y - z;
+    wheelSpeeds[MotorType.kFrontLeft.value] = input.x + input.y + zRotation;
+    wheelSpeeds[MotorType.kFrontRight.value] = input.x - input.y - zRotation;
+    wheelSpeeds[MotorType.kRearLeft.value] = input.x - input.y + zRotation;
+    wheelSpeeds[MotorType.kRearRight.value] = input.x + input.y - zRotation;
 
     normalize(wheelSpeeds);
 
