@@ -33,6 +33,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import frc.robot.MecanumDriveCTRE;
 import frc.robot.commands.*;
+import frc.robot.subsystems.DriveSubsystem;
 
 /** This is a demo program showing how to use Mecanum control with the MecanumDrive class. */
 public class Robot extends TimedRobot {
@@ -53,20 +54,15 @@ public class Robot extends TimedRobot {
   private TalonSRX mFrontRightTalon;
   private TalonSRX mRearRightTalon;
 
-  private MecanumDriveCTRE mRobotDrive;
-  private Joystick mJoystickA;
+  //private MecanumDriveCTRE mRobotDrive;
+  private DriveSubsystem mRobotDrive;
   private XboxController xController = new XboxController(0); 
   private TalonSRXConfiguration mDriveTalonSRXConfigAll;
   /* Robot Commands */
-  private final DriveTimed mSimpleAuto = new DriveTimed(3, 1, 0, 0, mRobotDrive);
-  private final DriveTimed mAnotherAuto = new DriveTimed(10, 1, 0, 0, mRobotDrive);
-  SendableChooser<DriveTimed> m_chooser = new SendableChooser<>();
-  private DriveTimed m_auto_command;
-
-  private NetworkTable table;
-  private NetworkTableEntry tx;
-  private NetworkTableEntry ta;
-  private NetworkTableEntry ty; 
+  // private final DriveTimed mSimpleAuto = new DriveTimed(3, 1, 0, 0, mRobotDrive);
+  // private final DriveTimed mAnotherAuto = new DriveTimed(10, 1, 0, 0, mRobotDrive);
+  // SendableChooser<DriveTimed> m_chooser = new SendableChooser<>();
+  // private DriveTimed m_auto_command;
 
   @Override
   public void robotInit() {
@@ -100,26 +96,23 @@ public class Robot extends TimedRobot {
     mDriveTalons.forEach(talon -> talon.config_kP(0, 2.1));
     mDriveTalons.forEach(talon -> talon.config_kI(0, 0.002));
 
-    mRobotDrive = new MecanumDriveCTRE(mFrontLeftTalon, mRearLeftTalon, mFrontRightTalon, mRearRightTalon);
+    mRobotDrive = new DriveSubsystem(mFrontLeftTalon, mRearLeftTalon, mFrontRightTalon, mRearRightTalon);
     // adjust for 117rpm in front and 312rpm in back
     mRobotDrive.setMotorCoeff(1, 0.375, 1, 0.375);
     // enable velocity control - max scale in ticks/100ms
     mRobotDrive.setControlMode(ControlMode.Velocity, 260);
 
-    mJoystickA = new Joystick(kJoystickAChannel);
+
 
     // auto selections
+    /*
     m_chooser.setDefaultOption("Simple Auto", mSimpleAuto);
     m_chooser.addOption("Another Auto", mAnotherAuto);
-
-    //limelight stuff
-    table = NetworkTableInstance.getDefault().getTable("limelight");
-    tx = table.getEntry("tx");
-    ty = table.getEntry("ty");
-    ta = table.getEntry("ta");
-
+    */
+   
+    mRobotDrive.setDefaultCommand(new DefaultDrive(xController::getLeftX, xController::getLeftY, mRobotDrive));
     
-    new Button(xController::getYButton).whenHeld(new LimelightDrive(mRobotDrive, table));
+    new Button(xController::getYButton).whenHeld(new LimelightDriveCommand(mRobotDrive));
     
 
   }
@@ -163,11 +156,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // Use the joystick X axis for lateral movement, Y axis for forward
     // movement, and Z axis for rotation.
-    mRobotDrive.driveCartesian(
-      xController.getLeftY(),
-      xController.getLeftX(),
-      xController.getRightX(),
-      0.0);
+    
   }
 
   //public Command getAutonomousCommand() {
@@ -175,11 +164,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_auto_command = m_chooser.getSelected();
-    // schedule the autonomous command
-    if (m_auto_command != null) {
-      m_auto_command.schedule();
-    }
+    // m_auto_command = m_chooser.getSelected();
+    // // schedule the autonomous command
+    // if (m_auto_command != null) {
+    //   m_auto_command.schedule();
+    // }
   }
 
   @Override
