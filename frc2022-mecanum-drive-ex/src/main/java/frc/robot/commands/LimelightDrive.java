@@ -57,9 +57,13 @@ public class LimelightDrive extends CommandBase {
     xController = new PIDController(0.1, 0, 0);
     yController = new PIDController(0.1, 0, 0);
 
-    // shuffleboard.addNumber("X", () -> tx.getDouble(0.0));
-    // shuffleboard.addNumber("Y", () -> ty.getDouble(0.0));
-    // shuffleboard.addNumber("A", () -> ta.getDouble(0.0));
+    tx = table.getEntry("tx");
+    ty = table.getEntry("ty");
+    ta = table.getEntry("ta");
+
+    shuffleboard.addNumber("X", () -> tx.getDouble(0.0));
+    shuffleboard.addNumber("Y", () -> ty.getDouble(0.0));
+    shuffleboard.addNumber("A", () -> ta.getDouble(0.0));
   }
 
   @Override
@@ -70,14 +74,12 @@ public class LimelightDrive extends CommandBase {
 
   @Override
   public void execute() {
-    tx = table.getEntry("tx");
-    ty = table.getEntry("ty");
-    ta = table.getEntry("ta");
+
 
     double ldifferenceX = xController.calculate(tx.getDouble(0.0));
     ldifferenceX = MathUtil.clamp(ldifferenceX, -1, 1);
 
-    double ldifferenceY = yController.calculate(ty.getDouble(0.0));
+    double ldifferenceY = -yController.calculate(ty.getDouble(0.0));
     ldifferenceY = MathUtil.clamp(ldifferenceY, -1, 1);
 
     mDrive.driveCartesian(ldifferenceY, ldifferenceX, 0, 0);

@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
   //private MecanumDriveCTRE mRobotDrive;
   private DriveSubsystem mRobotDrive;
   private NetworkTable table;
-  private XboxController xController = new XboxController(0); 
+  private XboxController xBoxController = new XboxController(0); 
   private TalonSRXConfiguration mDriveTalonSRXConfigAll;
   /* Robot Commands */
   // private final DriveTimed mSimpleAuto = new DriveTimed(3, 1, 0, 0, mRobotDrive);
@@ -71,7 +71,7 @@ public class Robot extends TimedRobot {
     mRearLeftTalon = new TalonSRX(kRearLeftId);
     mFrontRightTalon = new TalonSRX(kFrontRightId);
     mRearRightTalon = new TalonSRX(kRearRightId);
-    table = NetworkTableInstance.getDefault().getTable("limelight");
+    table = NetworkTableInstance.getDefault().getTable("limelight-b");
     List<TalonSRX> mDriveTalons = new ArrayList<>(Arrays.asList(
       mFrontLeftTalon, 
       mRearLeftTalon, 
@@ -112,9 +112,9 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("Another Auto", mAnotherAuto);
     */
    
-    mRobotDrive.setDefaultCommand(new DefaultDrive(xController::getLeftX, xController::getLeftY, mRobotDrive));
+    mRobotDrive.setDefaultCommand(new DefaultDrive(xBoxController::getLeftX, xBoxController::getLeftY, mRobotDrive));
     
-    new Button(xController::getYButton).whenHeld(new LimelightDrive(mRobotDrive, table));
+    new Button(xBoxController::getYButton).whenHeld(new LimelightDrive(mRobotDrive, table));
     
 
   }
