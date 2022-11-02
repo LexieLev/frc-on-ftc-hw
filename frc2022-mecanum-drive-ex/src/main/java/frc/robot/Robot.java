@@ -56,6 +56,7 @@ public class Robot extends TimedRobot {
 
   //private MecanumDriveCTRE mRobotDrive;
   private DriveSubsystem mRobotDrive;
+  private NetworkTable table;
   private XboxController xController = new XboxController(0); 
   private TalonSRXConfiguration mDriveTalonSRXConfigAll;
   /* Robot Commands */
@@ -70,6 +71,7 @@ public class Robot extends TimedRobot {
     mRearLeftTalon = new TalonSRX(kRearLeftId);
     mFrontRightTalon = new TalonSRX(kFrontRightId);
     mRearRightTalon = new TalonSRX(kRearRightId);
+    table = NetworkTableInstance.getDefault().getTable("limelight");
     List<TalonSRX> mDriveTalons = new ArrayList<>(Arrays.asList(
       mFrontLeftTalon, 
       mRearLeftTalon, 
@@ -112,7 +114,7 @@ public class Robot extends TimedRobot {
    
     mRobotDrive.setDefaultCommand(new DefaultDrive(xController::getLeftX, xController::getLeftY, mRobotDrive));
     
-    new Button(xController::getYButton).whenHeld(new LimelightDriveCommand(mRobotDrive));
+    new Button(xController::getYButton).whenHeld(new LimelightDrive(mRobotDrive, table));
     
 
   }

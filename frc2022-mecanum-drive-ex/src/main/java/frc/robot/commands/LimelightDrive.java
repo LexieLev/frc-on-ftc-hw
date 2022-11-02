@@ -19,11 +19,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 
 import frc.robot.MecanumDriveCTRE;
+import frc.robot.subsystems.DriveSubsystem;
 
 
 
 public class LimelightDrive extends CommandBase {
-  private final MecanumDriveCTRE mDrive;
+  private final DriveSubsystem mDrive;
 
 
   private NetworkTable table;
@@ -31,10 +32,6 @@ public class LimelightDrive extends CommandBase {
   private NetworkTableEntry ta;
   private NetworkTableEntry ty; 
 
-  private double previousPosX;
-  private double previousPosY;
-  private double currentX;
-  private double currentY;
 
   private PIDController xController;
   private PIDController yController;
@@ -50,59 +47,46 @@ public class LimelightDrive extends CommandBase {
    * @param drive The drive subsystem on which this command will run
    */
   public LimelightDrive(
-      MecanumDriveCTRE drive, NetworkTable table) {
+      DriveSubsystem drive, NetworkTable table) {
 
     mDrive = drive;
     this.table = table; 
 
-     shuffleboard = Shuffleboard.getTab("Limelight");
+    shuffleboard = Shuffleboard.getTab("Limelight");
     
+    xController = new PIDController(0.1, 0, 0);
+    yController = new PIDController(0.1, 0, 0);
+
+    // shuffleboard.addNumber("X", () -> tx.getDouble(0.0));
+    // shuffleboard.addNumber("Y", () -> ty.getDouble(0.0));
+    // shuffleboard.addNumber("A", () -> ta.getDouble(0.0));
   }
 
   @Override
   public void initialize() {
     //m_drive.resetEncoders();
-    mDrive.stopMotor();
-    
 
-    tx = table.getEntry("tx");
-    ty = table.getEntry("ty");
-    ta = table.getEntry("ta");
-
-    previousPosX = tx.getDouble(0.0); 
-    currentX = tx.getDouble(0.0);
-
-    previousPosY = ty.getDouble(0.0);
-    currentY = ty.getDouble(0.0);
-
-    shuffleboard.addNumber("X", () -> tx.getDouble(0.0));
-    shuffleboard.addNumber("Y", () -> ty.getDouble(0.0));
-    shuffleboard.addNumber("A", () -> ta.getDouble(0.0));
   }
 
   @Override
   public void execute() {
+    tx = table.getEntry("tx");
+    ty = table.getEntry("ty");
+    ta = table.getEntry("ta");
 
-    double differenceX = previousPosX - currentX; 
-    double ldifferenceX = xController.calculate(differenceX);
+    double ldifferenceX = xController.calculate(tx.getDouble(0.0));
     ldifferenceX = MathUtil.clamp(ldifferenceX, -1, 1);
 
-    double differenceY = previousPosY - currentY;
-    double ldifferenceY = yController.calculate(differenceY);
+    double ldifferenceY = yController.calculate(ty.getDouble(0.0));
     ldifferenceY = MathUtil.clamp(ldifferenceY, -1, 1);
 
-    mDrive.driveCartesian(ldifferenceY, ldifferenceX, 0);
+    mDrive.driveCartesian(ldifferenceY, ldifferenceX, 0, 0);
   }
 
 
-  private void periodic()
-  {
-
-    
-  }
   @Override
   public void end(boolean interrupted) {
-    mDrive.stopMotor();
+   
   }
 
   @Override

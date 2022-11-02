@@ -9,6 +9,8 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase.MotorType;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Button;
@@ -38,14 +40,6 @@ public class DriveSubsystem extends SubsystemBase {
     private TalonSRX mRearLeftTalon;
     private TalonSRX mFrontRightTalon;
     private TalonSRX mRearRightTalon;
-    private TalonSRXConfiguration mDriveTalonSRXConfigAll;
-    private MecanumDriveCTRE mRobotDrive;
-    private final PIDController pidController;
-    // private final CANCoder armEncoder;
-    private final NetworkTable table;
-    private NetworkTableEntry tx;
-    private NetworkTableEntry ty;
-    private NetworkTableEntry ta;
     
 
     private double m_frontLeftCoeff = 1;
@@ -53,8 +47,6 @@ public class DriveSubsystem extends SubsystemBase {
     private double m_frontRightCoeff = 1;
     private double m_rearRightCoeff = 1;
 
-    private PIDController xController;
-    private PIDController yController;
 
     private ControlMode m_driveControlMode = ControlMode.PercentOutput;
     private double m_driveVelocityScale = 1;
@@ -65,34 +57,13 @@ public class DriveSubsystem extends SubsystemBase {
         this.mRearLeftTalon = mRearLeftTalon;
         this.mFrontRightTalon = mFrontRightTalon;
         this.mRearRightTalon = mRearRightTalon;
- 
-        pidController = new PIDController(0,0, 0);
-        table = NetworkTableInstance.getDefault().getTable("limelight");
-        tx = table.getEntry("tx");
-        ty = table.getEntry("ty");
-        ta = table.getEntry("ta");
-
-        xController = new PIDController(0.1, 0, 0);
-        yController = new PIDController(0.1, 0, 0);
-    }
+      }
 
    public void driveMecanum(DoubleSupplier ySpeed, DoubleSupplier xSpeed, DoubleSupplier zRot)
    {
     // Use the joystick X axis for lateral movement, Y axis for forward
     // movement, and Z axis for rotation.
         // mRobotDrive.driveCartesian(ySpeed, xSpeed, zRot, 0.0);
-    }
-
-
-    public void DriveLimelight () {
-    // double differenceX = previousPosX - currentX; 
-    double ldifferenceX = xController.calculate(tx.getDouble(0.0));
-    ldifferenceX = MathUtil.clamp(ldifferenceX, -1, 1);
-
-    double ldifferenceY = yController.calculate(ty.getDouble(0.0));
-    ldifferenceY = MathUtil.clamp(ldifferenceY, -1, 1);
-
-    this.driveCartesian(ldifferenceY, 0, ldifferenceX, 0);
     }
 
     public void driveCartesian(double ySpeed, double xSpeed, double zRotation, double gyroAngle) {
