@@ -33,6 +33,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.SPI;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -51,6 +53,8 @@ public class DriveSubsystem extends SubsystemBase {
     private ControlMode m_driveControlMode = ControlMode.PercentOutput;
     private double m_driveVelocityScale = 1;
     private double m_maxOutput = 1.0;
+
+    private final ADXRS450_Gyro gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
 
     public DriveSubsystem( TalonSRX mFrontLeftTalon, TalonSRX mRearLeftTalon, TalonSRX mFrontRightTalon, TalonSRX mRearRightTalon) {
         this.mFrontLeftTalon = mFrontLeftTalon;

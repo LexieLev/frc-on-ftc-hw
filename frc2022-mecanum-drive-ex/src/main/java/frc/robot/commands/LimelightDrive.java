@@ -83,7 +83,10 @@ public class LimelightDrive extends CommandBase {
     double ldifferenceY = -yController.calculate(ta.getDouble(0.0));
     ldifferenceY = MathUtil.clamp(ldifferenceY, -1, 1);
 
-    mDrive.driveCartesian(ldifferenceY, 0, ldifferenceX, 0);
+    if(ty.getDouble(0.0) > -10)
+    {
+      mDrive.driveCartesian(ldifferenceY, 0, ldifferenceX, 0);
+    }
   }
 
 

@@ -104,15 +104,13 @@ public class Robot extends TimedRobot {
     // enable velocity control - max scale in ticks/100ms
     mRobotDrive.setControlMode(ControlMode.Velocity, 260);
 
-
-
     // auto selections
     /*
     m_chooser.setDefaultOption("Simple Auto", mSimpleAuto);
     m_chooser.addOption("Another Auto", mAnotherAuto);
     */
    
-    mRobotDrive.setDefaultCommand(new DefaultDrive(xBoxController::getLeftX, xBoxController::getLeftY, mRobotDrive));
+    //mRobotDrive.setDefaultCommand(new DefaultDrive(xBoxController::getLeftX, xBoxController::getLeftY, xBoxController::getRightX, mRobotDrive, xBoxController::getLeftBumperPressed));
     
     new Button(xBoxController::getYButton).whenHeld(new LimelightDrive(mRobotDrive, table));
     
